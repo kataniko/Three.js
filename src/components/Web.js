@@ -5,7 +5,7 @@ const Web = () => {
 
     return (
         <div id='ze'>
-            <h1>asdasdasd</h1>
+            <h1>asdasdaasdasd</h1>
            </div>
     )
 }

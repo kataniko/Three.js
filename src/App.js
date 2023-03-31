@@ -1,4 +1,4 @@
-import React, { Suspense, useRef } from "react";
+import React, { Suspense, useRef, useState, useEffect } from "react";
 import { Canvas } from '@react-three/fiber';
 import "./styles.css";
 import { CubeCamera, Environment, OrbitControls, PerspectiveCamera } from "@react-three/drei";
@@ -8,16 +8,43 @@ import { Rings } from "./components/Rings";
 import { Bloom, DepthOfField, EffectComposer } from "@react-three/postprocessing";
 import { BlendFunction } from "postprocessing";
 import { Name } from "./components/Name";
+import { Html } from '@react-three/drei';
+import Header from './components/Header'
 
 
 
-function CarShow() {
+function Button({ position, text, onClick }) {
+
+    return (
+
+        <Html>
+
+            <button onClick={() => onClick(position)} style={{ color: 'white', }}>{text}</button>
+
+        </Html>
+
+    )
+}
+
+
+function CarShow({ isMoving, onButtonClick }) {
+    const controlsRef = useRef();
+    const [cameraPosition, setCameraPosition] = useState([0, 1.5, -5.5]);
+
+    const handleButtonClick = () => {
+        if (!isMoving) {
+            setCameraPosition([2, 1.5, 5]);
+            controlsRef.current.target.set(0, 0.35, 0);
+        }
+        onButtonClick(!isMoving);
+    }
+
 
 
     return (
         <>
-            <OrbitControls target={[0, 0.35, 0]} maxPolarAngle={1.45} />
-            <PerspectiveCamera makeDefault fov={50} position={[0, 1.5, -5.5]} />
+            <OrbitControls ref={controlsRef} target={[0, 0.35, 0]} maxPolarAngle={1.45} />
+            <PerspectiveCamera makeDefault fov={50} position={cameraPosition} />
 
             <color args={[0, 0, 0]} attach="background" />
             <CubeCamera resolution={1080} frames={Infinity}>
@@ -31,7 +58,6 @@ function CarShow() {
             </CubeCamera>
             <Rings />
             <Name />
-
 
             <spotLight
                 color={[1, 0.25, 0.7]}
@@ -66,22 +92,30 @@ function CarShow() {
                 />
             </EffectComposer>
 
+            <Button position={[0, 1, -5]} text={'Click me!'} onClick={handleButtonClick} />
         </>
     )
 }
 
-function App() {
+export default function App() {
+    const [isMoving, setIsMoving] = useState(false);
 
     return (
         <>
-            <Suspense fallback={null}>
-                <Canvas id="show" shadows dpr={[1, 2]}>
-                    <CarShow />
-                    
-                </Canvas>
-            </Suspense>
+            <div className="container">
+                <Suspense >
+                    <Canvas className="canvas" shadows dpr={[1, 2]}>
+                        <Html className="back2">
+
+                            <div className="back">
+                                <Header />
+                            </div>
+
+                        </Html>
+                        <CarShow isMoving={isMoving} onButtonClick={setIsMoving} />
+                    </Canvas>
+                </Suspense>
+            </div >
         </>
     );
 }
-
-export default App;
