@@ -1,0 +1,11 @@
+Model Information:
+* title:	Point Cube
+* source:	https://sketchfab.com/3d-models/point-cube-0da83e60b69f458dba69fb3013ef3f38
+* author:	Vũ Võ (https://sketchfab.com/vuvo)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Point Cube" (https://sketchfab.com/3d-models/point-cube-0da83e60b69f458dba69fb3013ef3f38) by Vũ Võ (https://sketchfab.com/vuvo) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)

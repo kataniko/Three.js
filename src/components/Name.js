@@ -4,8 +4,10 @@ import { extend } from '@react-three/fiber';
 import { TextGeometry } from "three/examples/jsm/geometries/TextGeometry"
 import Neon from '../fonts/Neonderthaw_Regular.json';
 import { FontLoader } from 'three/addons/loaders/FontLoader.js';
+import { motion } from "framer-motion-3d"
+import { useMotionValue, useTransform } from "framer-motion"
 
-extend ({ TextGeometry })
+extend({ TextGeometry })
 
 export function Name() {
     const loader = new FontLoader();
@@ -15,12 +17,16 @@ export function Name() {
         size: 1,
         height: 0.3,
     };
+    const x = useMotionValue(0)
+    const scaleZ = useTransform(x, v => v / 100)
 
-    
+
     return (
-        <mesh position={[1.45,1.55,2]} rotation={[-Math.PI / 100, 3.14,0]} castShadow receiveShadow>
-            <textGeometry attach='geometry' args={['tomás', textOptions]} />
-            <meshPhysicalMaterial attach='material' color="hotpink" metalness={3} roughness={2} />
-        </mesh>
+       
+            <motion.mesh initial={{opacity:0}} position={[2.2, 1.55, 2]} rotation={[-Math.PI / 100, 3.14, 0]} castShadow receiveShadow>
+                <textGeometry attach='geometry' args={['Welcome', textOptions]} />
+                <meshStandardMaterial attach='material' color="hotpink" metalness={3} roughness={2} />
+            </motion.mesh>
+
     )
 }
