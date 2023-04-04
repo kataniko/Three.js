@@ -19,7 +19,7 @@ import { Projects } from "./components/Projects"
 function LoadingScreen({ progress }) {
     return (
         <div className="loading-screen">
-            <p>Loading {progress}%</p>
+            <p className="logo-1">Loading {progress}%</p>
             <div className="loading-bar">
                 <div className="loading-progress" style={{ width: `${progress}%` }}></div>
             </div>
@@ -47,7 +47,7 @@ function Button({ position, text, onClick }) {
 }
 
 
-function CarShow({}) {
+function CarShow({ }) {
 
     const controlsRef = useRef();
     const cameraRef = useRef();
@@ -57,26 +57,20 @@ function CarShow({}) {
     const [isMoving, setIsMoving] = useState(false)
 
 
+
     const positions = [
-        [16, 2, 2],
-        [13.6, 0, 1],
+    [16, 2, 2],
+    [13.6, 0, 1]
     ];
 
-    const targets = [[7, 0, -2], [-1, -0.2, -7.1],];
-
+    const targets = [
+    [7, 0, -2],
+    [-1, -0.2, -7.1]
+    ];
 
     const handleButtonClick = () => {
         if (isMoving) return;
 
-        const positions = [[2, 1.5, 5],
-        [16, 2, 2],
-        [13.6, 0, 1]
-        ];
-
-        const targets = [[0, 0.35, 0],
-        [7, 0, -2],
-        [-1, -0.2, -7.1]
-        ];
 
         const newPosition = positions[button - 1];
         const newTarget = targets[button - 1];
@@ -84,20 +78,16 @@ function CarShow({}) {
         setIsMoving(true);
 
         const tweenPosition = new TWEEN.Tween(cameraRef.current.position)
-            .to({ x: newPosition[0], y: newPosition[1], z: newPosition[2] }, 3000)
+            .to({ x: newPosition[0], y: newPosition[1], z: newPosition[2] }, 2000)
+            .easing(TWEEN.Easing.Quadratic.InOut)
+            
+        const tweenTarget = new TWEEN.Tween(controlsRef.current.target)
+            .to({ x: newTarget[0], y: newTarget[1], z: newTarget[2] }, 3000)
             .easing(TWEEN.Easing.Quadratic.InOut)
             .onComplete(() => {
                 setIsMoving(false);
-                if (button < positions.length) {
-                    setButton(button + 1);
-                } else {
-                    setButton(1);
-                }
+                setButton(button + 1);
             });
-
-        const tweenTarget = new TWEEN.Tween(controlsRef.current.target)
-            .to({ x: newTarget[0], y: newTarget[1], z: newTarget[2] }, 3000)
-            .easing(TWEEN.Easing.Quadratic.InOut);
 
         tweenPosition.chain(tweenTarget).start();
     };
