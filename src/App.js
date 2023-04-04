@@ -47,46 +47,61 @@ function Button({ position, text, onClick }) {
 }
 
 
-function CarShow({ isMoving, onButtonClick }) {
+function CarShow({}) {
 
     const controlsRef = useRef();
     const cameraRef = useRef();
     const [cameraPosition, setCameraPosition] = useState([0, 1.5, -5.5]);
     const [targetPosition, setTargetPosition] = useState([0, 0.35, 0]);
-    const [button, setButton] = useState(1)
+    const [button, setButton] = useState(1);
+    const [isMoving, setIsMoving] = useState(false)
+
+
+    const positions = [
+        [16, 2, 2],
+        [13.6, 0, 1],
+    ];
+
+    const targets = [[7, 0, -2], [-1, -0.2, -7.1],];
 
 
     const handleButtonClick = () => {
-        console.log(button);
-        setButton(button + 1);
-
         if (isMoving) return;
 
         const positions = [[2, 1.5, 5],
         [16, 2, 2],
-        [13.6, 0, 1],
+        [13.6, 0, 1]
         ];
 
         const targets = [[0, 0.35, 0],
         [7, 0, -2],
-        [-1, -0.2, -7.1],
+        [-1, -0.2, -7.1]
         ];
 
         const newPosition = positions[button - 1];
         const newTarget = targets[button - 1];
 
+        setIsMoving(true);
+
         const tweenPosition = new TWEEN.Tween(cameraRef.current.position)
-            .to({ x: newPosition[0], y: newPosition[1], z: newPosition[2] }, 1000)
+            .to({ x: newPosition[0], y: newPosition[1], z: newPosition[2] }, 3000)
             .easing(TWEEN.Easing.Quadratic.InOut)
-            .onUpdate(() => setCameraPosition([cameraRef.current.position.x, cameraRef.current.position.y, cameraRef.current.position.z]));
+            .onComplete(() => {
+                setIsMoving(false);
+                if (button < positions.length) {
+                    setButton(button + 1);
+                } else {
+                    setButton(1);
+                }
+            });
 
         const tweenTarget = new TWEEN.Tween(controlsRef.current.target)
-            .to({ x: newTarget[0], y: newTarget[1], z: newTarget[2] }, 1000)
-            .easing(TWEEN.Easing.Quadratic.InOut)
-            .onUpdate(() => setTargetPosition([controlsRef.current.target.x, controlsRef.current.target.y, controlsRef.current.target.z]));
+            .to({ x: newTarget[0], y: newTarget[1], z: newTarget[2] }, 3000)
+            .easing(TWEEN.Easing.Quadratic.InOut);
 
         tweenPosition.chain(tweenTarget).start();
-    }
+    };
+
 
     useEffect(() => {
         const animate = () => {
