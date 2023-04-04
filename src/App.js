@@ -34,7 +34,12 @@ function Button({ position, text, onClick }) {
 
         <Html>
 
-            <button onClick={() => onClick(position)} style={{ color: 'white', }}>{text}</button>
+            <div class="arrow" onClick={() => onClick(position)}>
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+
 
         </Html>
 
@@ -48,61 +53,39 @@ function CarShow({ isMoving, onButtonClick }) {
     const cameraRef = useRef();
     const [cameraPosition, setCameraPosition] = useState([0, 1.5, -5.5]);
     const [targetPosition, setTargetPosition] = useState([0, 0.35, 0]);
-    const [button, setButton] = useState(0)
+    const [button, setButton] = useState(1)
 
 
     const handleButtonClick = () => {
         console.log(button);
-        setButton(button + 1)
-        if (button == 1) {
-            if (!isMoving) {
-                const newPosition = [2, 1.5, 5];
-                const newTarget = [0, 0.35, 0];
-                const tween = new TWEEN.Tween(cameraRef.current.position)
-                    .to({ x: newPosition[0], y: newPosition[1], z: newPosition[2] }, 2000)
-                    .easing(TWEEN.Easing.Quadratic.InOut)
-                    .onUpdate(() => setCameraPosition([cameraRef.current.position.x, cameraRef.current.position.y, cameraRef.current.position.z]))
-                    .start();
-                new TWEEN.Tween(controlsRef.current.target)
-                    .to({ x: newTarget[0], y: newTarget[1], z: newTarget[2] }, 2000)
-                    .easing(TWEEN.Easing.Quadratic.InOut)
-                    .onUpdate(() => setTargetPosition([controlsRef.current.target.x, controlsRef.current.target.y, controlsRef.current.target.z]))
-                    .start();
-            }
-        }
+        setButton(button + 1);
 
-        if (button == 2) {
-            if (!isMoving) {
-                const newPosition = [16, 2, 2];
-                const newTarget = [7, 0, -2];
-                const tween = new TWEEN.Tween(cameraRef.current.position)
-                    .to({ x: newPosition[0], y: newPosition[1], z: newPosition[2] }, 2000)
-                    .easing(TWEEN.Easing.Quadratic.InOut)
-                    .onUpdate(() => setCameraPosition([cameraRef.current.position.x, cameraRef.current.position.y, cameraRef.current.position.z]))
-                    .start();
-                new TWEEN.Tween(controlsRef.current.target)
-                    .to({ x: newTarget[0], y: newTarget[1], z: newTarget[2] }, 2000)
-                    .easing(TWEEN.Easing.Quadratic.InOut)
-                    .onUpdate(() => setTargetPosition([controlsRef.current.target.x, controlsRef.current.target.y, controlsRef.current.target.z]))
-                    .start();
-            }
-        }
-        if (button == 3) {
-            if (!isMoving) {
-                const newPosition = [13.6, 0, 1];
-                const newTarget = [-1, -0.2, -7.1];
-                const tween = new TWEEN.Tween(cameraRef.current.position)
-                    .to({ x: newPosition[0], y: newPosition[1], z: newPosition[2] }, 2000)
-                    .easing(TWEEN.Easing.Quadratic.InOut)
-                    .onUpdate(() => setCameraPosition([cameraRef.current.position.x, cameraRef.current.position.y, cameraRef.current.position.z]))
-                    .start();
-                new TWEEN.Tween(controlsRef.current.target)
-                    .to({ x: newTarget[0], y: newTarget[1], z: newTarget[2] }, 2000)
-                    .easing(TWEEN.Easing.Quadratic.InOut)
-                    .onUpdate(() => setTargetPosition([controlsRef.current.target.x, controlsRef.current.target.y, controlsRef.current.target.z]))
-                    .start();
-            }
-        }
+        if (isMoving) return;
+
+        const positions = [[2, 1.5, 5],
+        [16, 2, 2],
+        [13.6, 0, 1],
+        ];
+
+        const targets = [[0, 0.35, 0],
+        [7, 0, -2],
+        [-1, -0.2, -7.1],
+        ];
+
+        const newPosition = positions[button - 1];
+        const newTarget = targets[button - 1];
+
+        const tweenPosition = new TWEEN.Tween(cameraRef.current.position)
+            .to({ x: newPosition[0], y: newPosition[1], z: newPosition[2] }, 1000)
+            .easing(TWEEN.Easing.Quadratic.InOut)
+            .onUpdate(() => setCameraPosition([cameraRef.current.position.x, cameraRef.current.position.y, cameraRef.current.position.z]));
+
+        const tweenTarget = new TWEEN.Tween(controlsRef.current.target)
+            .to({ x: newTarget[0], y: newTarget[1], z: newTarget[2] }, 1000)
+            .easing(TWEEN.Easing.Quadratic.InOut)
+            .onUpdate(() => setTargetPosition([controlsRef.current.target.x, controlsRef.current.target.y, controlsRef.current.target.z]));
+
+        tweenPosition.chain(tweenTarget).start();
     }
 
     useEffect(() => {
@@ -114,13 +97,19 @@ function CarShow({ isMoving, onButtonClick }) {
     }, []);
 
 
+
     return (
         <>
-            <OrbitControls ref={controlsRef} target={[0, 0.35, 0]} maxPolarAngle={1.45} enableZoom={true}
-                enablePan={true} // Disable rotation while moving
-                enableRotate={true}
-                enableDamping={true}
-                dampingFactor={0.1} />
+            <OrbitControls
+                ref={controlsRef}
+                target={[0, 0.35, 0]}
+                maxPolarAngle={1.45}
+                enableZoom={false}
+                enablePan={false}
+                enableRotate={false}
+                enableDamping
+                dampingFactor={0.1}
+            />
 
             <PerspectiveCamera makeDefault fov={50} position={cameraPosition} ref={cameraRef} />
 
@@ -135,16 +124,11 @@ function CarShow({ isMoving, onButtonClick }) {
                 )}
             </CubeCamera>
             <Rings />
-
-
-            {/* <Name /> */}
-
-
+            <Name />
             <Golden />
             <Projects />
 
-
-            //spotlights do carro
+            {/* spotlights do carro */}
             <spotLight
                 color={[1, 0.25, 0.7]}
                 intensity={2}
@@ -152,8 +136,17 @@ function CarShow({ isMoving, onButtonClick }) {
                 penumbra={1.5}
                 position={[5, 5, 0]}
                 castShadow
-                shadow-bias={-0.0001} />
-
+                shadow-bias={-0.0001}
+            />
+            <spotLight
+                color={[0.14, 0.5, 1]}
+                intensity={2}
+                angle={0.6}
+                penumbra={0.5}
+                position={[-5, 5, 0]}
+                castShadow
+                shadow-bias={-0.0001}
+            />
 
             <spotLight
                 color={[0.14, 0.5, 1]}
@@ -162,24 +155,21 @@ function CarShow({ isMoving, onButtonClick }) {
                 penumbra={0.5}
                 position={[-5, 5, 0]}
                 castShadow
-                shadow-bias={-0.0001} />
-
-
-
-            //spotlights do quadro
+                shadow-bias={-0.0001}
+            />
 
             <spotLight
-                color={"yellow"}
+                color={[13.7, 0.5, -7]}
                 intensity={1}
-                angle={0.5}
-                penumbra={1.5}
-                position={[25, 10, 0]}
+                angle={0.3}
+                penumbra={0.5}
+                position={[15, 2, -0]}
                 castShadow
-                shadow-bias={-0.0001} />
+                shadow-bias={-0.0001}
+            />
+            {/* spotlights do quadro */}
             <Ground />
-
             <EffectComposer>
-
                 <Bloom
                     blendFunction={BlendFunction.ADD}
                     intensity={1}
@@ -203,7 +193,7 @@ export default function App() {
         <>
             <div className="container">
                 <Suspense fallback={[<LoadingScreen />]} >
-                    <Canvas className="canvas" shadows dpr={[1, 2]}>
+                    <Canvas className="canvas" shadows >
                         <Html className="back2">
 
                             <div className="back">

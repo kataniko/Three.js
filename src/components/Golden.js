@@ -27,7 +27,7 @@ export function Golden (){
                 //ligar sombras
                 object.castShadow = true ; 
                 //ligar receber sombras de outros objetos
-                object.receiveShadow = true;
+                object.receiveShadow = false;
                 //intensidade do material
                 object.material.envMapIntensity = 20;
             }

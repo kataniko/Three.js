@@ -23,10 +23,10 @@ export function Name() {
 
     return (
        
-            <motion.mesh initial={{opacity:0}} position={[2.2, 1.55, 2]} rotation={[-Math.PI / 100, 3.14, 0]} castShadow receiveShadow>
+            <mesh initial={{opacity:0}} position={[2.2, 1.55, 2]} rotation={[-Math.PI / 100, 3.14, 0]} castShadow receiveShadow>
                 <textGeometry attach='geometry' args={['Welcome', textOptions]} />
                 <meshStandardMaterial attach='material' color="hotpink" metalness={3} roughness={2} />
-            </motion.mesh>
+            </mesh>
 
     )
 }
