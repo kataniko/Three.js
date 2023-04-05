@@ -12,8 +12,10 @@ import { Html } from '@react-three/drei';
 import * as TWEEN from 'tween.js';
 import Header from './components/Header'
 import { Golden } from './components/Golden'
-import { motion } from "framer-motion-3d"
 import { Projects } from "./components/Projects"
+
+
+
 
 
 function LoadingScreen({ progress }) {
@@ -26,7 +28,6 @@ function LoadingScreen({ progress }) {
         </div>
     )
 }
-
 
 function Button({ position, text, onClick }) {
 
@@ -59,13 +60,13 @@ function CarShow({ }) {
 
 
     const positions = [
-    [16, 2, 2],
-    [13.6, 0, 1]
+        [16, 2, 5],
+        [13.6, 0, 1]
     ];
 
     const targets = [
-    [7, 0, -2],
-    [-1, -0.2, -7.1]
+        [10, 0, -2],
+        [-1, -0.2, -7.1]
     ];
 
     const handleButtonClick = () => {
@@ -78,19 +79,20 @@ function CarShow({ }) {
         setIsMoving(true);
 
         const tweenPosition = new TWEEN.Tween(cameraRef.current.position)
-            .to({ x: newPosition[0], y: newPosition[1], z: newPosition[2] }, 2000)
-            .easing(TWEEN.Easing.Quadratic.InOut)
-            
-        const tweenTarget = new TWEEN.Tween(controlsRef.current.target)
-            .to({ x: newTarget[0], y: newTarget[1], z: newTarget[2] }, 3000)
+            .to({ x: newPosition[0], y: newPosition[1], z: newPosition[2] }, 3000)
             .easing(TWEEN.Easing.Quadratic.InOut)
             .onComplete(() => {
                 setIsMoving(false);
                 setButton(button + 1);
             });
+        const tweenTarget = new TWEEN.Tween(controlsRef.current.target)
+            .to({ x: newTarget[0], y: newTarget[1], z: newTarget[2] }, 3000)
+            .easing(TWEEN.Easing.Quadratic.InOut)
+
 
         tweenPosition.chain(tweenTarget).start();
     };
+
 
 
     useEffect(() => {
@@ -109,9 +111,9 @@ function CarShow({ }) {
                 ref={controlsRef}
                 target={[0, 0.35, 0]}
                 maxPolarAngle={1.45}
-                enableZoom={false}
-                enablePan={false}
-                enableRotate={false}
+                enableZoom={true}
+                enablePan={true}
+                enableRotate={true}
                 enableDamping
                 dampingFactor={0.1}
             />
@@ -119,7 +121,8 @@ function CarShow({ }) {
             <PerspectiveCamera makeDefault fov={50} position={cameraPosition} ref={cameraRef} />
 
             <color args={[0, 0, 0]} attach="background" />
-            <CubeCamera resolution={1080} frames={Infinity}>
+            <CubeCamera resolution={1024} frames={60}>
+
                 {(texture) => (
                     <>
                         <Environment map={texture} />
@@ -127,11 +130,13 @@ function CarShow({ }) {
                         <Car />
                     </>
                 )}
+
             </CubeCamera>
             <Rings />
             <Name />
             <Golden />
             <Projects />
+
 
             {/* spotlights do carro */}
             <spotLight
@@ -172,6 +177,8 @@ function CarShow({ }) {
                 castShadow
                 shadow-bias={-0.0001}
             />
+
+
             {/* spotlights do quadro */}
             <Ground />
             <EffectComposer>
@@ -186,7 +193,7 @@ function CarShow({ }) {
                 />
             </EffectComposer>
 
-            <Button position={[0, 1, -5]} text={'Click me!'} onClick={() => handleButtonClick()} />
+            <Button position={[0, 1, -5]} onClick={() => handleButtonClick()} />
         </>
     )
 }

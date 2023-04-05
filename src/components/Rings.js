@@ -31,10 +31,10 @@ export function Rings() {
 
   return (
     <>
-      {[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0].map((v, i) => (
+      {[...Array(14)].map((v, i) => (
         <mesh
           castShadow
-          receiveShadow
+          
           position={[0, 0, 0]}
           key={i}
           ref={(el) => (itemsRef.current[i] = el)}

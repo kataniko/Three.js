@@ -1,39 +1,24 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { useLoader } from "@react-three/fiber";
-import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader"
-import { Mesh } from "three"
-import { useEffect } from "react";
-import { useFrame } from "@react-three/fiber";
+import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
+import { Mesh } from "three";
 
-export function Car (){
+export function Car() {
+  const gltf = useLoader(GLTFLoader, process.env.PUBLIC_URL + "models/Car/scene.gltf");
 
-    //load do carro
+  const car = useMemo(() => {
+    const carObject = gltf.scene.clone();
+    carObject.scale.set(1, 1, 1);
+    carObject.position.set(0, 0.73, 0);
+    carObject.traverse((object) => {
+      if (object instanceof Mesh) {
+        object.castShadow = true;
+        object.receiveShadow = true;
+        object.material.envMapIntensity = 20;
+      }
+    });
+    return carObject;
+  }, [gltf]);
 
-    const gltf = useLoader(
-        GLTFLoader,
-        process.env.PUBLIC_URL + "models/Car/scene.gltf"
-    );
-
-        //dar downscale pq vem demasiado grande normalmente
-    useEffect(() =>{
-        //escala do carro
-        gltf.scene.scale.set(1, 1, 1);
-        //altura do carro
-        gltf.scene.position.set(0, 0.73, 0);
-        gltf.scene.traverse((object) => {
-            if(object instanceof Mesh) {
-                //ligar sombras
-                object.castShadow = true ; 
-                //ligar receber sombras de outros objetos
-                object.receiveShadow = true;
-                //intensidade do material
-                object.material.envMapIntensity = 20;
-            }
-        });
-    },[gltf]);
-
-
-
-    //export do objeto
-    return <primitive object={gltf.scene} />;
+  return <primitive object={car} />;
 }
