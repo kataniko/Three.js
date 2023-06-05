@@ -14,7 +14,7 @@ export function Car() {
       if (object instanceof Mesh) {
         object.castShadow = true;
         object.receiveShadow = true;
-        object.material.envMapIntensity = 20;
+        object.material.envMapIntensity =10;
       }
     });
     return carObject;

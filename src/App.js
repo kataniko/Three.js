@@ -13,32 +13,49 @@ import * as TWEEN from 'tween.js';
 import Header from './components/Header'
 import { Golden } from './components/Golden'
 import { Projects } from "./components/Projects"
+import useSound from 'use-sound';
+import sub from './sounds/sub.mp3';
+import { useProgress } from "@react-three/drei";
 
 
-
-
-
-function LoadingScreen({ progress }) {
+function LoadingScreen({ started, onStarted }) {
+    const { progress } = useProgress();
     return (
-        <div className="loading-screen">
-            <p className="logo-1">Loading {progress}%</p>
-            <div className="loading-bar">
-                <div className="loading-progress" style={{ width: `${progress}%` }}></div>
+        <div className={`loadingScreen ${started ? "loadingScreen--started" : ""}`}>
+            <div className="loadingScreen__progress">
+                <div
+                    className="loadingScreen__progress__value"
+                    style={{
+                        width: `${progress}%`,
+                    }}
+                />
+            </div>
+            <div className="loadingScreen__board">
+                <h1 className="loadingScreen__title">Loading</h1>
+                <button
+                    className="loadingScreen__button"
+                    disabled={progress < 100}
+                    onClick={onStarted}
+                >
+                    Start Experience
+                </button>
             </div>
         </div>
     )
 }
 
 function Button({ position, text, onClick }) {
-
+    const [play2] = useSound(sub);
     return (
 
         <Html>
 
             <div class="arrow" onClick={() => onClick(position)}>
-                <span></span>
-                <span></span>
-                <span></span>
+                <div onClick={play2}>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
             </div>
 
 
@@ -111,9 +128,9 @@ function CarShow({ }) {
                 ref={controlsRef}
                 target={[0, 0.35, 0]}
                 maxPolarAngle={1.45}
-                enableZoom={true}
-                enablePan={true}
-                enableRotate={true}
+                enableZoom={false}
+                enablePan={false}
+                enableRotate={false}
                 enableDamping
                 dampingFactor={0.1}
             />
@@ -198,25 +215,34 @@ function CarShow({ }) {
     )
 }
 
+const audio = new Audio("./sounds/orbit.mp3");
+
 export default function App() {
     const [isMoving, setIsMoving] = useState(false);
+    const [start, setStart] = useState(false);
+
+    useEffect(() => {
+        if (start) {
+            audio.play();
+        }
+    }, [start]);
 
     return (
         <>
             <div className="container">
-                <Suspense fallback={[<LoadingScreen />]} >
-                    <Canvas className="canvas" shadows >
-                        <Html className="back2">
-
-                            <div className="back">
-                                <Header />
-                            </div>
-
-                        </Html>
+                <Suspense fallback={[<LoadingScreen started={start} onStarted={() => setStart(true)} />]}>
+                    <Canvas className="canvas" shadows>
+                        {start ? (
+                            <Html className="back2">
+                                <div className="back">
+                                    <Header />
+                                </div>
+                            </Html>
+                        ) : null}
                         <CarShow isMoving={isMoving} onButtonClick={setIsMoving} />
                     </Canvas>
                 </Suspense>
-            </div >
+            </div>
         </>
     );
 }
